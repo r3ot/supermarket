@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AISLE™ Creative Agency — Est. 2024</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+  :root {
+    --paper: #f5f0e8;
+    --ink: #1a1a1a;
+    --ink-light: #3d3d3d;
+    --faded: #8a8a8a;
+    --accent: #c41e3a;
+    --accent2: #1a4fad;
+    --border: #1a1a1a;
+    --receipt-bg: #faf7f2;
+    --dashed: repeating-linear-gradient(90deg, #1a1a1a 0, #1a1a1a 6px, transparent 6px, transparent 12px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Courier Prime', monospace;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ─── RECEIPT TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(0,0,0,0.03) 24px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── HEADER / RECEIPT TOP ─── */
+  .receipt-header {
+    width: 100%;
+    background: var(--receipt-bg);
+    border-bottom: 3px solid var(--ink);
+    padding: 2rem 0 1rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .store-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 10vw, 7rem);
+    letter-spacing: 0.15em;
+    line-height: 0.9;
+    color: var(--ink);
+  }
+
+  .store-name span { color: var(--accent); }
+
+  .store-tagline {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--faded);
+    margin-top: 0.5rem;
+  }
+
+  .receipt-divider {
+    height: 2px;
+    background: var(--dashed);
+    margin: 1rem 2rem;
+  }
+
+  .receipt-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--faded);
+  }
+
+  /* ─── NAVIGATION ─── */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    background: var(--ink);
+  }
+
+  nav a {
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  nav a:last-child { border-right: none; }
+  nav a:hover { background: var(--accent); color: white; }
+
+  /* ─── SECTIONS ─── */
+  section { position: relative; }
+
+  .section-receipt-head {
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+    padding: 0.5rem 2rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 4rem 2rem 3rem;
+    background: var(--receipt-bg);
+    border-bottom: 3px double var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.6em;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    max-width: 560px;
+    color: var(--ink-light);
+    border-left: 3px solid var(--accent);
+    padding-left: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: left;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--faded);
+  }
+
+  /* barcode decorative */
+  .barcode-deco {
+    position: absolute;
+    right: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.12;
+  }
+
+  .barcode-deco svg { width: 80px; height: 140px; }
+
+  /* ─── AISLE SECTION ─── */
+  .aisle {
+    padding: 3rem 2rem;
+    background: var(--receipt-bg);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .aisle-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--faded);
+    margin-bottom: 0.25rem;
+  }
+
+  .aisle-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+  }
+
+  .aisle-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--faded);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  /* ─── 3D PRODUCT GRID ─── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    border: 2px solid var(--ink);
+  }
+
+  .product-card {
+    background: var(--paper);
+    border: 1px solid rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .product-card:hover { transform: scale(1.01); z-index: 2; }
+
+  .product-canvas-wrap {
+    width: 100%;
+    height: 280px;
+    position: relative;
+    background: linear-gradient(135deg, #f0ebe0, #e8e2d5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-canvas-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .product-info {
+    padding: 1.25rem 1.25rem 1rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .product-category {
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+  }
+
+  .product-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .product-desc {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  /* Nutrition facts mini table */
+  .nutrition-table {
+    border: 2px solid var(--ink);
+    font-size: 0.6rem;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .nutrition-table .nt-title {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.5rem;
+  }
+
+  .nutrition-table .nt-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.2rem 0.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .nutrition-table .nt-row:last-child { border-bottom: none; }
+  .nutrition-table .nt-bold { font-weight: bold; }
+
+  .product-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+
+  .product-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .product-price sup {
+    font-size: 0.8rem;
+    vertical-align: super;
+    font-family: 'Courier Prime', monospace;
+    font-weight: bold;
+  }
+
+  .add-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: 2px solid var(--ink);
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .add-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .add-btn.added {
+    background: #2d7a2d;
+    border-color: #2d7a2d;
+  }
+
+  /* ─── ABOUT / RECEIPT ROW ─── */
+  .about-section {
+    background: var(--receipt-bg);
+    border-bottom: 3px double var(--ink);
+    padding: 4rem 2rem;
+  }
+
+  .about-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  @media (max-width: 640px) {
+    .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-stats { gap: 1.5rem; }
+    .barcode-deco { display: none; }
+  }
+
+  .about-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 0.95;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .about-body {
+    font-size: 0.82rem;
+    line-height: 1.9;
+    color: var(--ink-light);
+  }
+
+  .ingredients-list {
+    border: 2px solid var(--ink);
+    padding: 1rem 1.25rem;
+    background: white;
+  }
+
+  .ingredients-list h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.25rem;
+  }
+
+  .ingredient {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.2);
+    letter-spacing: 0.05em;
+  }
+
+  .ingredient:last-child { border-bottom: none; }
+
+  .percent {
+    font-weight: bold;
+    color: var(--accent);
+  }
+
+  /* ─── CART SECTION ─── */
+  .cart-section {
+    background: var(--receipt-bg);
+    padding: 3rem 2rem 4rem;
+  }
+
+  .cart-receipt {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border: 2px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+
+  .cart-receipt-header {
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .cart-store-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.2em;
+  }
+
+  .cart-receipt-meta {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+  }
+
+  .cart-items-list {
+    padding: 1rem 1.5rem;
+    min-height: 200px;
+  }
+
+  .cart-empty {
+    text-align: center;
+    color: var(--faded);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    padding: 3rem 0;
+  }
+
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .cart-item-name {
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+
+  .cart-item-code {
+    font-size: 0.6rem;
+    color: var(--faded);
+    letter-spacing: 0.15em;
+  }
+
+  .cart-item-price {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-align: right;
+    min-width: 80px;
+  }
+
+  .cart-remove {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-family: 'Courier Prime', monospace;
+    padding: 0 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cart-totals {
+    border-top: 2px solid var(--ink);
+    padding: 1rem 1.5rem;
+  }
+
+  .cart-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    padding: 0.25rem 0;
+    letter-spacing: 0.05em;
+  }
+
+  .cart-total-final {
+    border-top: 2px solid var(--ink);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cart-total-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cart-total-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  /* Barcode */
+  .cart-barcode {
+    text-align: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-top: 1px dashed var(--ink);
+  }
+
+  .barcode-svg {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+
+  .barcode-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--faded);
+    display: block;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.3em;
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .checkout-btn:hover { background: var(--accent); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .footer-store {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-fine {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.4);
+    line-height: 2;
+  }
+
+  /* ─── TICKER TAPE ─── */
+  .ticker-wrap {
+    background: var(--accent);
+    color: white;
+    overflow: hidden;
+    padding: 0.4rem 0;
+    border-top: 2px solid #8b0000;
+    border-bottom: 2px solid #8b0000;
+  }
+
+  .ticker {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker 25s linear infinite;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .ticker span { padding: 0 3rem; }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── PROCESS RECEIPT ─── */
+  .process-section {
+    background: white;
+    padding: 4rem 2rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .process-receipt {
+    max-width: 500px;
+    margin: 0 auto;
+    border: 2px solid var(--ink);
+  }
+
+  .process-receipt-head {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1rem 1.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+  }
+
+  .process-step {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px dashed rgba(0,0,0,0.2);
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .step-content h4 {
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .step-content p {
+    font-size: 0.68rem;
+    color: var(--faded);
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+  }
+
+  .step-days {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--faded);
+    white-space: nowrap;
+  }
+
+  /* scroll reveal */
+  .reveal { opacity: 0; transform: translateY(20px); }
+
+  /* notify toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--accent);
+    z-index: 10000;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">ITEM ADDED TO CART ✓</div>
+
+<!-- ─── RECEIPT HEADER ─── -->
+<header class="receipt-header">
+  <div class="store-name">AISLE<span>™</span></div>
+  <div class="store-tagline">Premium Creative Services — Checkout Anytime</div>
+  <div class="receipt-divider"></div>
+  <div class="receipt-meta">
+    <span>EST. 2024 — CREATIVE DISTRICT</span>
+    <span>OPEN 24/7 — NO RETURNS ON BAD IDEAS</span>
+    <span>REG #: 00X-2847-CREAT</span>
+  </div>
+</header>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a href="#services">★ SERVICES</a>
+  <a href="#about">ABOUT</a>
+  <a href="#process">PROCESS</a>
+  <a href="#cart">CART (0)</a>
+  <a href="#contact">CONTACT</a>
+</nav>
+
+<!-- ─── TICKER ─── -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>★ NOW IN STOCK: BRAND IDENTITY</span>
+    <span>◆ WEB DESIGN — FRESH DAILY</span>
+    <span>★ MOTION GRAPHICS — NEW BATCH</span>
+    <span>◆ STRATEGY — IMPORTED</span>
+    <span>★ COPYWRITING — ARTISANAL</span>
+    <span>◆ SEO — BULK DISCOUNT AVAILABLE</span>
+    <span>★ NOW IN STOCK: BRAND IDENTITY</span>
+    <span>◆ WEB DESIGN — FRESH DAILY</span>
+    <span>★ MOTION GRAPHICS — NEW BATCH</span>
+    <span>◆ STRATEGY — IMPORTED</span>
+    <span>★ COPYWRITING — ARTISANAL</span>
+    <span>◆ SEO — BULK DISCOUNT AVAILABLE</span>
+  </div>
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">★ AISLE™ CREATIVE AGENCY — RECEIPT #00001</div>
+    <h1 class="hero-title">
+      WE MAKE<br>
+      BRANDS<br>
+      <em>worth buying.</em>
+    </h1>
+    <p class="hero-description">
+      Every service is a product. Every product has a price.
+      We stock only the finest creative solutions — packaged,
+      branded, and ready to add to cart. No fillers. No artificial flavours.
+      100% pure creative output.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">247</div>
+        <div class="stat-label">Products shipped</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Client satisfaction</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">12yr</div>
+        <div class="stat-label">On the shelf</div>
+      </div>
+    </div>
+  </div>
+  <!-- decorative barcode -->
+  <div class="barcode-deco" aria-hidden="true">
+    <svg viewBox="0 0 80 140" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="2" height="110" fill="#000"/><rect x="4" y="0" width="4" height="110" fill="#000"/><rect x="10" y="0" width="2" height="110" fill="#000"/>
+      <rect x="14" y="0" width="6" height="110" fill="#000"/><rect x="22" y="0" width="2" height="110" fill="#000"/><rect x="26" y="0" width="4" height="110" fill="#000"/>
+      <rect x="32" y="0" width="2" height="110" fill="#000"/><rect x="36" y="0" width="6" height="110" fill="#000"/><rect x="44" y="0" width="2" height="110" fill="#000"/>
+      <rect x="48" y="0" width="4" height="110" fill="#000"/><rect x="54" y="0" width="2" height="110" fill="#000"/><rect x="58" y="0" width="6" height="110" fill="#000"/>
+      <rect x="66" y="0" width="2" height="110" fill="#000"/><rect x="70" y="0" width="4" height="110" fill="#000"/><rect x="76" y="0" width="2" height="110" fill="#000"/>
+      <text x="40" y="128" font-family="monospace" font-size="8" text-anchor="middle" fill="#000">8 14729 23841 0</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ─── SERVICES / PRODUCTS ─── -->
+<section id="services">
+  <div class="section-receipt-head">★ AISLE 01 — CREATIVE SERVICES — ALL ITEMS SUBJECT TO AVAILABILITY ★</div>
+  <div class="aisle" style="border-top:2px solid var(--ink);">
+    <div class="aisle-label">Product Department</div>
+    <div class="aisle-title">OUR SERVICES</div>
+    <div class="aisle-sub">// Hover product to inspect — Click ADD TO CART to purchase</div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div class="section-receipt-head">★ ABOUT — INGREDIENTS & NUTRITIONAL INFORMATION ★</div>
+  <div class="about-section">
+    <div class="about-inner">
+      <div>
+        <h2 class="about-heading">WHAT WE'RE<br>MADE OF.</h2>
+        <p class="about-body">
+          AISLE™ is a full-service creative agency operating out of the most
+          premium shelf space in the industry. Founded by designers who got
+          tired of watered-down creative — we produce only concentrated,
+          high-impact work with no artificial additives.
+          <br><br>
+          Each service is carefully formulated, quality-tested, and packaged
+          for maximum brand impact. We believe good design has a nutritional
+          value — it feeds your audience something worth consuming.
+          <br><br>
+          <em>Best served at room temperature. Do not microwave.</em>
+        </p>
+      </div>
+      <div class="ingredients-list">
+        <h4>INGREDIENTS</h4>
+        <div class="ingredient"><span>Strategic Thinking</span><span class="percent">38%</span></div>
+        <div class="ingredient"><span>Visual Design</span><span class="percent">24%</span></div>
+        <div class="ingredient"><span>Creative Direction</span><span class="percent">15%</span></div>
+        <div class="ingredient"><span>Motion & Code</span><span class="percent">12%</span></div>
+        <div class="ingredient"><span>Copywriting</span><span class="percent">7%</span></div>
+        <div class="ingredient"><span>Coffee</span><span class="percent">4%</span></div>
+        <div class="ingredient" style="margin-top:0.5rem; font-size:0.6rem; color:var(--faded);">
+          <span>Contains traces of: Perfectionism, Obsession, Ambition</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROCESS ─── -->
+<section id="process">
+  <div class="section-receipt-head">★ HOW IT WORKS — PURCHASE JOURNEY ★</div>
+  <div class="process-section">
+    <div class="aisle-title" style="text-align:center; font-family:'Bebas Neue'; font-size:2.5rem; letter-spacing:0.1em; margin-bottom:2rem;">OUR PROCESS</div>
+    <div class="process-receipt">
+      <div class="process-receipt-head">TRANSACTION FLOW — REF: PROC-2024-A</div>
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h4>Discovery Call</h4>
+          <p>We scan your brand's barcode and assess what's in stock, what's missing, and what's expired.</p>
+        </div>
+        <div class="step-days">Day 1–2</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h4>Strategy & Proposal</h4>
+          <p>A custom shopping list. Every item justified. Every price explained. No hidden charges at checkout.</p>
+        </div>
+        <div class="step-days">Day 3–5</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h4>Production</h4>
+          <p>We pack the shelves. Designers, strategists, and developers working in parallel on your product line.</p>
+        </div>
+        <div class="step-days">Week 2–6</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h4>Delivery & Handoff</h4>
+          <p>Items bagged, branded, and shipped. Full handoff with documentation. Freshness guaranteed.</p>
+        </div>
+        <div class="step-days">Week 6–8</div>
+      </div>
+      <div class="process-step" style="border-bottom:none;">
+        <div class="step-num">★</div>
+        <div class="step-content">
+          <h4>Ongoing Restocking</h4>
+          <p>Retainers available. We keep your creative stocked and fresh all year. Ask about our loyalty program.</p>
+        </div>
+        <div class="step-days">Ongoing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SHOPPING CART ─── -->
+<section id="cart">
+  <div class="section-receipt-head">★ YOUR CART — CHECKOUT WHEN READY — ALL PRICES EXCL. TAX ★</div>
+  <div class="cart-section">
+    <div class="cart-receipt">
+      <div class="cart-receipt-header">
+        <div class="cart-store-name">AISLE™ CHECKOUT</div>
+        <div class="cart-receipt-meta">
+          CASHIER: AUTOMATED CREATIVE SYSTEM<br>
+          DATE: <span id="receiptDate"></span> | TERMINAL: CRE-09
+        </div>
+      </div>
+      <div class="cart-items-list" id="cartItemsList">
+        <div class="cart-empty" id="cartEmpty">
+          — CART IS EMPTY —<br>
+          <span style="font-size:0.65rem; display:block; margin-top:0.5rem;">Add items from the services above</span>
+        </div>
+      </div>
+      <div class="cart-totals" id="cartTotals" style="display:none;">
+        <div class="cart-row"><span>SUBTOTAL</span><span id="subtotal">$0.00</span></div>
+        <div class="cart-row"><span>TAX (8.5%)</span><span id="taxAmount">$0.00</span></div>
+        <div class="cart-row"><span>CREATIVE FEE</span><span>$0.00</span></div>
+        <div class="cart-total-final">
+          <div class="cart-total-label">TOTAL DUE</div>
+          <div class="cart-total-amount" id="totalAmount">$0.00</div>
+        </div>
+      </div>
+      <div class="cart-barcode">
+        <svg class="barcode-svg" width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="3" height="50" fill="#000"/><rect x="5" y="0" width="5" height="50" fill="#000"/>
+          <rect x="12" y="0" width="2" height="50" fill="#000"/><rect x="16" y="0" width="4" height="50" fill="#000"/>
+          <rect x="22" y="0" width="3" height="50" fill="#000"/><rect x="27" y="0" width="7" height="50" fill="#000"/>
+          <rect x="36" y="0" width="2" height="50" fill="#000"/><rect x="40" y="0" width="5" height="50" fill="#000"/>
+          <rect x="47" y="0" width="3" height="50" fill="#000"/><rect x="52" y="0" width="2" height="50" fill="#000"/>
+          <rect x="56" y="0" width="6" height="50" fill="#000"/><rect x="64" y="0" width="3" height="50" fill="#000"/>
+          <rect x="69" y="0" width="4" height="50" fill="#000"/><rect x="75" y="0" width="2" height="50" fill="#000"/>
+          <rect x="79" y="0" width="7" height="50" fill="#000"/><rect x="88" y="0" width="3" height="50" fill="#000"/>
+          <rect x="93" y="0" width="2" height="50" fill="#000"/><rect x="97" y="0" width="5" height="50" fill="#000"/>
+          <rect x="104" y="0" width="3" height="50" fill="#000"/><rect x="109" y="0" width="4" height="50" fill="#000"/>
+          <rect x="115" y="0" width="2" height="50" fill="#000"/><rect x="119" y="0" width="6" height="50" fill="#000"/>
+          <rect x="127" y="0" width="3" height="50" fill="#000"/><rect x="132" y="0" width="5" height="50" fill="#000"/>
+          <rect x="139" y="0" width="2" height="50" fill="#000"/><rect x="143" y="0" width="4" height="50" fill="#000"/>
+          <rect x="149" y="0" width="3" height="50" fill="#000"/><rect x="154" y="0" width="7" height="50" fill="#000"/>
+          <rect x="163" y="0" width="2" height="50" fill="#000"/><rect x="167" y="0" width="5" height="50" fill="#000"/>
+          <rect x="174" y="0" width="3" height="50" fill="#000"/><rect x="179" y="0" width="4" height="50" fill="#000"/>
+          <rect x="185" y="0" width="2" height="50" fill="#000"/><rect x="189" y="0" width="6" height="50" fill="#000"/>
+          <rect x="197" y="0" width="3" height="50" fill="#000"/>
+          <text x="100" y="58" font-family="monospace" font-size="8" text-anchor="middle" fill="#555">2 84729 13841 6</text>
+        </svg>
+        <span class="barcode-num" id="receiptNum">RECEIPT #000000</span>
+      </div>
+      <button class="checkout-btn" onclick="handleCheckout()">★ PROCEED TO CHECKOUT ★</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer id="contact">
+  <div class="footer-store">AISLE™ CREATIVE AGENCY</div>
+  <div class="receipt-divider" style="margin:1rem auto;max-width:300px;opacity:0.3;"></div>
+  <div class="footer-fine">
+    THANK YOU FOR SHOPPING WITH AISLE™<br>
+    HELLO@AISLEAGENCY.COM — +1 (800) CREATIVE<br>
+    123 BRAND BOULEVARD, CREATIVE DISTRICT, NY 10001<br>
+    —<br>
+    © 2024 AISLE™ INC. ALL RIGHTS RESERVED.<br>
+    ITEMS NOT REDEEMABLE FOR CASH. MANAGEMENT RESERVES THE RIGHT TO REFUSE SERVICE.<br>
+    NO ARTIFICIAL FLAVOURS. NO PRESERVATIVES. MADE WITH 100% REAL CREATIVE TALENT.
+  </div>
+</footer>
+
+<script>
+// ─── SERVICES DATA ───
+const services = [
+  {
+    id: 'brand-001',
+    category: 'Identity',
+    name: 'BRAND IDENTITY KIT',
+    desc: 'Full visual identity system. Logo, colour palette, typography, and brand guidelines — packaged and preserved.',
+    price: 4800,
+    priceDisplay: '4,800',
+    color: '#c41e3a',
+    bgColor: '#fff0f2',
+    accentText: '#fff',
+    nutrition: [
+      { label: 'Strategy', val: '35g' },
+      { label: 'Visual Design', val: '48g' },
+      { label: 'Copywriting', val: '12g' },
+      { label: 'Revisions', val: '5 rounds' }
+    ],
+    barcode: '8 14729 23841 0',
+    shape: 'box',
+    labelColor: 0xc41e3a
+  },
+  {
+    id: 'web-002',
+    category: 'Digital',
+    name: 'WEBSITE DESIGN',
+    desc: 'Custom multi-page web experience. Responsive, fast, and obsessively detailed. No templates.',
+    price: 7200,
+    priceDisplay: '7,200',
+    color: '#1a4fad',
+    bgColor: '#f0f4ff',
+    accentText: '#fff',
+    nutrition: [
+      { label: 'UX Research', val: '20g' },
+      { label: 'Design', val: '40g' },
+      { label: 'Development', val: '35g' },
+      { label: 'SEO', val: '5g' }
+    ],
+    barcode: '5 23817 49201 3',
+    shape: 'can',
+    labelColor: 0x1a4fad
+  },
+  {
+    id: 'motion-003',
+    category: 'Animation',
+    name: 'MOTION DESIGN PKG',
+    desc: 'Logo animations, social reels, and explainer videos. Your brand in movement — 60fps guaranteed.',
+    price: 3600,
+    priceDisplay: '3,600',
+    color: '#2d7a2d',
+    bgColor: '#f0fff2',
+    accentText: '#fff',
+    nutrition: [
+      { label: 'Storyboard', val: '10g' },
+      { label: 'Animation', val: '60g' },
+      { label: 'Sound Design', val: '20g' },
+      { label: 'Exports', val: '10g' }
+    ],
+    barcode: '7 38291 00483 9',
+    shape: 'tube',
+    labelColor: 0x2d7a2d
+  },
+  {
+    id: 'strategy-004',
+    category: 'Consulting',
+    name: 'BRAND STRATEGY',
+    desc: 'Positioning, messaging, and market differentiation. The thinking behind the doing.',
+    price: 5500,
+    priceDisplay: '5,500',
+    color: '#7b3f00',
+    bgColor: '#fff8f0',
+    accentText: '#fff',
+    nutrition: [
+      { label: 'Research', val: '45g' },
+      { label: 'Positioning', val: '30g' },
+      { label: 'Messaging', val: '20g' },
+      { label: 'Workshops', val: '5g' }
+    ],
+    barcode: '4 92736 18204 7',
+    shape: 'box',
+    labelColor: 0x7b3f00
+  },
+  {
+    id: 'copy-005',
+    category: 'Writing',
+    name: 'ARTISANAL COPY',
+    desc: 'Words that sell, compel, and stick. Headlines, web copy, campaigns. Handcrafted daily.',
+    price: 2400,
+    priceDisplay: '2,400',
+    color: '#4a0080',
+    bgColor: '#f8f0ff',
+    accentText: '#fff',
+    nutrition: [
+      { label: 'Tone of Voice', val: '25g' },
+      { label: 'Headlines', val: '30g' },
+      { label: 'Body Copy', val: '40g' },
+      { label: 'Proofreading', val: '5g' }
+    ],
+    barcode: '3 74810 29374 1',
+    shape: 'can',
+    labelColor: 0x4a0080
+  },
+  {
+    id: 'social-006',
+    category: 'Content',
+    name: 'SOCIAL CONTENT PKG',
+    desc: 'Monthly content production. Templates, captions, and strategy. Fully loaded.',
+    price: 1800,
+    priceDisplay: '1,800',
+    color: '#b5850c',
+    bgColor: '#fffbf0',
+    accentText: '#fff',
+    nutrition: [
+      { label: 'Posts/Month', val: '30' },
+      { label: 'Stories', val: '20' },
+      { label: 'Strategy', val: '15g' },
+      { label: 'Reporting', val: '5g' }
+    ],
+    barcode: '6 19283 74620 5',
+    shape: 'tube',
+    labelColor: 0xb5850c
+  }
+];
+
+// ─── CART STATE ───
+let cart = [];
+
+// ─── DATE ───
+const now = new Date();
+document.getElementById('receiptDate').textContent =
+  now.toLocaleDateString('en-US', { month:'2-digit', day:'2-digit', year:'numeric' });
+document.getElementById('receiptNum').textContent =
+  'RECEIPT #' + String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+
+// ─── THREE.JS PRODUCT RENDERERS ───
+function createProductRenderer(canvas, service) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 0);
+
+  const w = canvas.clientWidth || 280;
+  const h = canvas.clientHeight || 280;
+  renderer.setSize(w, h, false);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
+  camera.position.set(0, 0.5, 4.5);
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambient);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  dirLight.position.set(3, 5, 5);
+  dirLight.castShadow = true;
+  scene.add(dirLight);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+  fillLight.position.set(-3, -2, 3);
+  scene.add(fillLight);
+  const rimLight = new THREE.DirectionalLight(0xffe0a0, 0.5);
+  rimLight.position.set(0, 3, -5);
+  scene.add(rimLight);
+
+  // Create label texture
+  function makeLabelCanvas(svc) {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#faf7f2';
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Color band top
+    ctx.fillStyle = svc.color;
+    ctx.fillRect(0, 0, 512, 160);
+
+    // Service name on band
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 56px Arial Black';
+    ctx.textAlign = 'center';
+    const words = svc.name.split(' ');
+    if (words.length > 2) {
+      ctx.fillText(words.slice(0,-1).join(' '), 256, 80);
+      ctx.font = 'bold 40px Arial Black';
+      ctx.fillText(words[words.length-1], 256, 132);
+    } else {
+      ctx.fillText(svc.name, 256, 100);
+    }
+
+    // Category badge
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 160, 512, 32);
+    ctx.fillStyle = '#f5f0e8';
+    ctx.font = '600 18px Arial';
+    ctx.letterSpacing = '8px';
+    ctx.textAlign = 'center';
+    ctx.fillText(svc.category.toUpperCase(), 256, 182);
+
+    // AISLE logo
+    ctx.fillStyle = svc.color;
+    ctx.font = 'bold 28px Arial Black';
+    ctx.textAlign = 'left';
+    ctx.fillText('AISLE™', 30, 240);
+
+    // Divider
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(30, 250); ctx.lineTo(482, 250);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Description
+    ctx.fillStyle = '#3d3d3d';
+    ctx.font = '16px Georgia';
+    ctx.textAlign = 'center';
+    const descWords = svc.desc.split(' ');
+    let line = '', y = 285;
+    for (let w of descWords) {
+      const test = line + w + ' ';
+      if (ctx.measureText(test).width > 440 && line) {
+        ctx.fillText(line.trim(), 256, y); y += 22; line = w + ' ';
+      } else { line = test; }
+    }
+    if (line) ctx.fillText(line.trim(), 256, y);
+
+    // Price
+    ctx.fillStyle = svc.color;
+    ctx.font = 'bold 48px Arial Black';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + svc.priceDisplay, 482, 400);
+
+    // Barcode
+    ctx.fillStyle = '#1a1a1a';
+    const bx = 30, by = 420, bw = 120, bh = 50;
+    const bars = [3,5,2,4,3,7,2,5,3,2,6,3,4,2,7,3,2,5];
+    let bpos = bx;
+    bars.forEach((bv, bi) => {
+      if (bi % 2 === 0) { ctx.fillRect(bpos, by, bv, bh); }
+      bpos += bv + 2;
+    });
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(svc.barcode, bx, by + bh + 14);
+
+    // Net weight / serving
+    ctx.fillStyle = '#8a8a8a';
+    ctx.font = '13px Georgia';
+    ctx.textAlign = 'right';
+    ctx.fillText('NET WT. 1 PROJECT (∞ REVISIONS)', 482, 480);
+
+    return c;
+  }
+
+  const labelCanvas = makeLabelCanvas(service);
+  const labelTex = new THREE.CanvasTexture(labelCanvas);
+
+  // Create geometry
+  let mesh;
+  if (service.shape === 'box') {
+    const geo = new THREE.BoxGeometry(1.4, 2.2, 1.0, 1, 1, 1);
+    const mats = [
+      new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.4, metalness: 0.05 }),
+      new THREE.MeshStandardMaterial({ color: service.labelColor, roughness: 0.5 }),
+      new THREE.MeshStandardMaterial({ color: 0xf5f0e8, roughness: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: 0xf5f0e8, roughness: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: service.labelColor, roughness: 0.5 }),
+      new THREE.MeshStandardMaterial({ color: service.labelColor, roughness: 0.5 }),
+    ];
+    mesh = new THREE.Mesh(geo, mats);
+  } else if (service.shape === 'can') {
+    const geo = new THREE.CylinderGeometry(0.72, 0.72, 2.0, 32);
+    // Create wrap texture for cylinder
+    const wrapCanvas = document.createElement('canvas');
+    wrapCanvas.width = 512; wrapCanvas.height = 512;
+    const wctx = wrapCanvas.getContext('2d');
+    wctx.fillStyle = service.color;
+    wctx.fillRect(0, 0, 512, 512);
+    wctx.fillStyle = '#ffffff';
+    wctx.font = 'bold 72px Arial Black';
+    wctx.textAlign = 'center';
+    const nameWords = service.name.split(' ');
+    nameWords.forEach((w, i) => {
+      wctx.fillText(w, 256, 100 + i * 80);
+    });
+    wctx.fillStyle = 'rgba(255,255,255,0.3)';
+    wctx.fillRect(0, 380, 512, 132);
+    wctx.fillStyle = '#1a1a1a';
+    wctx.font = '14px monospace';
+    wctx.fillText(service.barcode, 256, 430);
+    // draw barcode lines
+    let bp = 80;
+    [3,5,2,4,3,7,2,5,3,2,6,3,4,2,7].forEach((bv, bi) => {
+      if (bi % 2 === 0) { wctx.fillRect(bp, 440, bv, 40); }
+      bp += bv + 2;
+    });
+    wctx.fillStyle = '#ffffff';
+    wctx.font = 'bold 28px Arial';
+    wctx.textAlign = 'center';
+    wctx.fillText('AISLE™ — ' + service.category.toUpperCase(), 256, 510);
+    const wrapTex = new THREE.CanvasTexture(wrapCanvas);
+    const sideMat = new THREE.MeshStandardMaterial({ map: wrapTex, roughness: 0.3, metalness: 0.15 });
+    const topMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.3, metalness: 0.4 });
+    mesh = new THREE.Mesh(geo, [sideMat, topMat, topMat]);
+  } else { // tube
+    const path = [];
+    for (let i = 0; i <= 20; i++) {
+      const t = i / 20;
+      path.push(new THREE.Vector2(
+        0.5 + 0.25 * Math.sin(t * Math.PI),
+        t * 2.4 - 1.2
+      ));
+    }
+    const geo = new THREE.LatheGeometry(path, 32);
+    const tubeTex = new THREE.CanvasTexture(labelCanvas);
+    const mat = new THREE.MeshStandardMaterial({ map: tubeTex, roughness: 0.35, metalness: 0.1 });
+    mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.x = 0.3;
+  }
+
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+
+  // Floating platform
+  const platGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.08, 32);
+  const platMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 });
+  const platform = new THREE.Mesh(platGeo, platMat);
+  platform.position.y = -1.3;
+  scene.add(platform);
+
+  // Rotation state
+  let autoRotate = true;
+  let targetRotY = 0;
+  let isDragging = false;
+  let prevX = 0;
+  let rotY = 0;
+  let rotSpeed = 0;
+
+  // Mouse interaction
+  canvas.addEventListener('mouseenter', () => { autoRotate = false; });
+  canvas.addEventListener('mouseleave', () => { autoRotate = true; });
+  canvas.addEventListener('mousedown', (e) => { isDragging = true; prevX = e.clientX; });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - prevX;
+    rotSpeed = dx * 0.01;
+    prevX = e.clientX;
+  });
+
+  // Touch support
+  let prevTX = 0;
+  canvas.addEventListener('touchstart', (e) => { isDragging = true; prevTX = e.touches[0].clientX; autoRotate = false; });
+  canvas.addEventListener('touchend', () => { isDragging = false; setTimeout(() => autoRotate = true, 2000); });
+  canvas.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - prevTX;
+    rotSpeed = dx * 0.01;
+    prevTX = e.touches[0].clientX;
+  });
+
+  // Animate
+  let frame;
+  let bob = 0;
+
+  function animate() {
+    frame = requestAnimationFrame(animate);
+    bob += 0.02;
+    mesh.position.y = Math.sin(bob) * 0.06;
+    platform.position.y = -1.3 + Math.sin(bob) * 0.06;
+
+    if (autoRotate) {
+      rotY += 0.008;
+    } else {
+      rotY += rotSpeed;
+      rotSpeed *= 0.92;
+    }
+    mesh.rotation.y = rotY;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Handle resize
+  const resizeObs = new ResizeObserver(() => {
+    const pw = canvas.parentElement.clientWidth;
+    const ph = canvas.parentElement.clientHeight;
+    renderer.setSize(pw, ph, false);
+    camera.aspect = pw / ph;
+    camera.updateProjectionMatrix();
+  });
+  resizeObs.observe(canvas.parentElement);
+
+  return () => { cancelAnimationFrame(frame); renderer.dispose(); };
+}
+
+// ─── BUILD PRODUCT CARDS ───
+function buildProductCards() {
+  const grid = document.getElementById('productsGrid');
+  const cleanups = [];
+
+  services.forEach(svc => {
+    const card = document.createElement('div');
+    card.className = 'product-card reveal';
+    card.innerHTML = `
+      <div class="product-canvas-wrap">
+        <canvas id="canvas-${svc.id}"></canvas>
+      </div>
+      <div class="product-info">
+        <div class="product-category">${svc.category} — SKU: ${svc.id.toUpperCase()}</div>
+        <div class="product-name">${svc.name}</div>
+        <div class="product-desc">${svc.desc}</div>
+        <div class="nutrition-table">
+          <div class="nt-title">Nutrition Facts</div>
+          <div class="nt-row"><span class="nt-bold">Serving Size</span><span>1 Project</span></div>
+          ${svc.nutrition.map(n => `<div class="nt-row"><span>${n.label}</span><span class="nt-bold">${n.val}</span></div>`).join('')}
+        </div>
+        <div class="product-bottom">
+          <div class="product-price"><sup>$</sup>${svc.priceDisplay}</div>
+          <button class="add-btn" id="btn-${svc.id}" onclick="addToCart('${svc.id}')">+ ADD TO CART</button>
+        </div>
+        <div style="font-size:0.6rem;color:var(--faded);margin-top:0.5rem;letter-spacing:0.1em;">
+          BARCODE: ${svc.barcode}
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+
+    // Initialize Three.js after DOM insertion
+    setTimeout(() => {
+      const canvas = document.getElementById(`canvas-${svc.id}`);
+      if (canvas) {
+        const cleanup = createProductRenderer(canvas, svc);
+        cleanups.push(cleanup);
+      }
+    }, 100 + services.indexOf(svc) * 50);
+  });
+}
+
+// ─── CART FUNCTIONS ───
+function addToCart(id) {
+  const svc = services.find(s => s.id === id);
+  if (!svc) return;
+
+  if (cart.find(c => c.id === id)) {
+    showToast('ALREADY IN CART');
+    return;
+  }
+
+  cart.push(svc);
+  renderCart();
+  updateNavCount();
+  showToast(`${svc.name} ADDED TO CART ✓`);
+
+  const btn = document.getElementById(`btn-${id}`);
+  if (btn) {
+    btn.textContent = '✓ IN CART';
+    btn.classList.add('added');
+    btn.disabled = true;
+  }
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  renderCart();
+  updateNavCount();
+
+  const btn = document.getElementById(`btn-${id}`);
+  if (btn) {
+    btn.textContent = '+ ADD TO CART';
+    btn.classList.remove('added');
+    btn.disabled = false;
+  }
+}
+
+function renderCart() {
+  const list = document.getElementById('cartItemsList');
+  const empty = document.getElementById('cartEmpty');
+  const totals = document.getElementById('cartTotals');
+
+  if (cart.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty || createEmptyEl());
+    document.getElementById('cartEmpty') && (document.getElementById('cartEmpty').style.display = 'block');
+    totals.style.display = 'none';
+    return;
+  }
+
+  list.innerHTML = cart.map(svc => `
+    <div class="cart-item">
+      <div class="cart-item-name">
+        ${svc.name}
+        <div class="cart-item-code">${svc.barcode} | ${svc.category.toUpperCase()}</div>
+      </div>
+      <div class="cart-item-price">$${svc.priceDisplay}</div>
+      <button class="cart-remove" onclick="removeFromCart('${svc.id}')">✕</button>
+    </div>
+  `).join('');
+
+  totals.style.display = 'block';
+
+  const subtotal = cart.reduce((a, s) => a + s.price, 0);
+  const tax = subtotal * 0.085;
+  const total = subtotal + tax;
+
+  document.getElementById('subtotal').textContent = '$' + subtotal.toLocaleString('en-US', {minimumFractionDigits: 2});
+  document.getElementById('taxAmount').textContent = '$' + tax.toFixed(2);
+  document.getElementById('totalAmount').textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits: 2});
+}
+
+function updateNavCount() {
+  const link = document.querySelector('nav a[href="#cart"]');
+  if (link) link.textContent = `CART (${cart.length})`;
+}
+
+function handleCheckout() {
+  if (cart.length === 0) {
+    showToast('YOUR CART IS EMPTY');
+    return;
+  }
+  showToast('THANK YOU! WE WILL BE IN TOUCH SHORTLY.');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ─── GSAP SCROLL ANIMATIONS ───
+gsap.registerPlugin(ScrollTrigger);
+
+function initAnimations() {
+  // Reveal cards
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: i * 0.08,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 88%',
+        once: true
+      }
+    });
+  });
+
+  // Hero title
+  gsap.from('.hero-title', {
+    opacity: 0,
+    y: 40,
+    duration: 1,
+    ease: 'power3.out',
+    delay: 0.3
+  });
+
+  gsap.from('.hero-description', {
+    opacity: 0,
+    x: -30,
+    duration: 0.8,
+    ease: 'power2.out',
+    delay: 0.6
+  });
+
+  gsap.from('.hero-stats .stat', {
+    opacity: 0,
+    y: 20,
+    stagger: 0.12,
+    duration: 0.6,
+    ease: 'power2.out',
+    delay: 0.9
+  });
+
+  // Process steps
+  gsap.utils.toArray('.process-step').forEach((step, i) => {
+    gsap.from(step, {
+      opacity: 0,
+      x: -20,
+      duration: 0.5,
+      delay: i * 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: step,
+        start: 'top 85%',
+        once: true
+      }
+    });
+  });
+
+  // Ingredients
+  gsap.utils.toArray('.ingredient').forEach((ing, i) => {
+    gsap.from(ing, {
+      opacity: 0,
+      x: 15,
+      duration: 0.4,
+      delay: i * 0.07,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: ing,
+        start: 'top 90%',
+        once: true
+      }
+    });
+  });
+}
+
+// ─── INIT ───
+buildProductCards();
+initAnimations();
+</script>
+</body>
+</html>
